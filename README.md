@@ -1,22 +1,15 @@
-# Grindr Google OAuth WebExtension
+# Free Grind Google OAuth WebExtension
 
 > [!NOTE]
-> If you're an Android user, you might be looking for [Open Grind](https://opengrind.org) or [Open Grind Google OAuth Android app](https://git.opengrind.org/open-grind/google-oauth-app) instead.
+> On Android, use the [Free Grind Google OAuth app](https://github.com/fdev8974/free-grind-oauth-app) instead. It bundles this extension and hands the token straight to [Free Grind](https://github.com/fdev8974/free-grind).
 
-WebExtension that gets OAuth access token via Google Identity Services (GIS) for Grindr sign-in. Made possible by the fact that GIS refuses to run in embedded app WebViews, and GeckoView forbids the host app from injecting JS into pages.
-
-![Screenshot](./contrib/screenshot.avif)
+WebExtension that gets an OAuth access token via Google Identity Services (GIS) for signing in to Free Grind. Made possible by the fact that GIS refuses to run in embedded app WebViews, and GeckoView forbids the host app from injecting JS into pages. Based on [Open Grind's Grindr Google OAuth WebExtension](https://git.opengrind.org/open-grind/grindr-google-oauth-webextension).
 
 ## Install
 
-- **Firefox, Librewolf** (desktop & Android):
-    - [Download from addons.mozilla.org](https://addons.mozilla.org/en-US/firefox/addon/grindr-google-oauth/) (recommended)
-    - _or_ download `grindr_google_oauth-x.x.x-firefox.zip` from [Releases](https://git.opengrind.org/open-grind/grindr-google-oauth-webextension/releases), unarchive, load the unpacked directory via `about:debugging` (This Firefox → "Load Temporary Add-on")
-- **Google Chrome, Chromium & Chromium-based browsers** (desktop only):
-    - [Download from chrome.google.com](https://chromewebstore.google.com/detail/grindr-google-oauth/oknhfchbiaghpdadehfnlkelhlflpgck) (recommended)
-    - _or_ download `grindr_google_oauth-x.x.x-chrome.zip` from [Releases](https://git.opengrind.org/open-grind/grindr-google-oauth-webextension/releases), unarchive, load the unpacked directory via `chrome://extensions` (Developer mode → "Load unpacked")
-- **GeckoView** (for developers embedding this project into their Android app):
-    - Download `grindr_google_oauth-x.x.x-geckoview.zip` from [Releases](https://git.opengrind.org/open-grind/grindr-google-oauth-webextension/releases), bundle the built `web-ext-artifacts/geckoview/` directory in your app's `assets/` and install it as a built-in extension via `runtime.webExtensionController.ensureBuiltIn(uri, id)` (`nativeMessaging` and `geckoViewAddons` are privileged permissions that only work for a built-in extension)
+- **Firefox, Librewolf** (desktop & Android): download `freegrind_google_oauth-x.x.x-firefox.zip` from [Releases](https://github.com/fdev8974/freegrind-google-oauth-webextension/releases), unarchive, load the unpacked directory via `about:debugging` (This Firefox → "Load Temporary Add-on")
+- **Google Chrome, Chromium & Chromium-based browsers** (desktop only): download `freegrind_google_oauth-x.x.x-chrome.zip` from [Releases](https://github.com/fdev8974/freegrind-google-oauth-webextension/releases), unarchive, load the unpacked directory via `chrome://extensions` (Developer mode → "Load unpacked")
+- **GeckoView** (for developers embedding this project into their Android app): download `freegrind_google_oauth-x.x.x-geckoview.zip` from [Releases](https://github.com/fdev8974/freegrind-google-oauth-webextension/releases), bundle the built `web-ext-artifacts/geckoview/` directory in your app's `assets/` and install it as a built-in extension via `runtime.webExtensionController.ensureBuiltIn(uri, id)` (`nativeMessaging` and `geckoViewAddons` are privileged permissions that only work for a built-in extension)
 
 Alternatively, clone the repository yourself and build the extension using `./build.sh [firefox|chrome|geckoview]` (requires [Bun](https://bun.com)).
 
@@ -29,7 +22,7 @@ Alternatively, clone the repository yourself and build the extension using `./bu
 3. A new tab opens with a button
 4. Click "Sign in with Google"
 5. Complete the OAuth flow in the Google window that opens
-6. Tap "Copy token" on the page and paste it into the host app
+6. Tap "Copy token" on the page and paste it into Free Grind's sign-in screen (Google tab)
 
 **GeckoView**:
 
@@ -41,7 +34,7 @@ Alternatively, clone the repository yourself and build the extension using `./bu
 runtime.webExtensionController
     .ensureBuiltIn(
         "resource://android/assets/grindr-google-oauth/",
-        "grindr-google-oauth-webextension@opengrind.org",
+        "freegrind-google-oauth-webextension@estopia.dev",
     )
     .accept { extension ->
         extension?.setMessageDelegate(delegate, "grindr_google_oauth")
@@ -68,7 +61,7 @@ One delegate is kept per runtime, per extension id and native app name, and the 
 
 A session-level delegate (`session.webExtensionController.setMessageDelegate(extension, delegate, name)`) receives messages from extension pages in that session. This extension sends none, so you do not need one.
 
-The token is then to be used with the [`/v8/sessions/thirdparty` endpoint](https://opengrind.org/grindr-api/authentication#login-via-third-party-wip).
+Free Grind signs in with the token via Grindr's `/v8/sessions/thirdparty` endpoint.
 
 ## License
 

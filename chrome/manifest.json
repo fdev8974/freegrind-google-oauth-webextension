@@ -1,9 +1,9 @@
 {
 	"manifest_version": 3,
-	"name": "Grindr Google OAuth",
-	"homepage_url": "https://git.opengrind.org/open-grind/grindr-google-oauth-webextension",
+	"name": "Free Grind Google OAuth",
+	"homepage_url": "https://github.com/fdev8974/freegrind-google-oauth-webextension",
 	"version": "1.0.6",
-	"description": "Grindr Google OAuth token extractor for third-party Grindr clients",
+	"description": "Gets a Google OAuth token for signing in to Free Grind",
 	"minimum_chrome_version": "102",
 	"icons": {
 		"16": "icons/icon-16.png",

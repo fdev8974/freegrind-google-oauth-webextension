@@ -110,7 +110,7 @@
 		const note = element("p", "grindr-oauth-token-note");
 		note.append(
 			"Paste it into ",
-			element("strong", "", "Open Grind"),
+			element("strong", "", "Free Grind"),
 			". Don't share it publicly. The token expires in about an hour.",
 		);
 

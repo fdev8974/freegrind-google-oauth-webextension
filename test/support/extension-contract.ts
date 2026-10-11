@@ -9,7 +9,7 @@ export const TEXT = {
 	copied: "Copied",
 	copiedStatus: "Full token copied to your clipboard.",
 	copyFailed: "Couldn't reach the clipboard. Tap the token, then copy it.",
-	note: "Paste it into Open Grind. Don't share it publicly. The token expires in about an hour.",
+	note: "Paste it into Free Grind. Don't share it publicly. The token expires in about an hour.",
 	missingTitle: "No token here",
 	missingStatus: "Run the sign-in again.",
 	noAnswer: "The app didn't answer.",

@@ -1,5 +1,5 @@
 {
-	"name": "grindr-google-oauth-webextension",
+	"name": "freegrind-google-oauth-webextension",
 	"private": true,
 	"type": "module",
 	"scripts": {

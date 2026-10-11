@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "grindr-google-oauth-webextension",
+      "name": "freegrind-google-oauth-webextension",
       "devDependencies": {
         "@opengrind/config": "^1.3.0",
         "eslint": "^10.8.0",

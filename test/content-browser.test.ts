@@ -67,7 +67,7 @@ const expectTokenView = ({ tab, token }: { tab: Tab; token: string }) => {
 	expect(ui.status.getAttribute("role")).toBe("status");
 	expect(ui.status.textContent).toBe("");
 	expect(ui.note.textContent).toBe(TEXT.note);
-	expect(ui.note.querySelector("strong")?.textContent).toBe("Open Grind");
+	expect(ui.note.querySelector("strong")?.textContent).toBe("Free Grind");
 	expect(ui.find("button")).toBeNull();
 	expect(ui.find("error")).toBeNull();
 	expect(ui.card.classList.contains("grindr-oauth-token-card")).toBe(true);
