@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 
-import { NATIVE_APP, TEXT } from "./support/extension-contract";
+import { NATIVE_APP, SIGN_IN_URL, TEXT } from "./support/extension-contract";
 import { nativePayloads, tokenMessages } from "./support/fake-background";
 import {
 	closeOpenPages,
@@ -13,6 +13,8 @@ import { flush, waitFor } from "./support/waiting";
 afterEach(closeOpenPages);
 
 const target = "geckoview";
+
+const AUTO_START_URL = `${SIGN_IN_URL}#autostart`;
 
 const clickSignIn = (tab: Tab) => tab.trustedClick(tab.ui.button);
 
@@ -47,6 +49,46 @@ describe("geckoview content", () => {
 			"shared/gis-core.js",
 			"shared/page-runner.js",
 		]);
+	});
+
+	test("waits for the tap unless the app asks to go straight to Google", async () => {
+		const { tab } = await readySignIn(target, { native: "accept" });
+		await flush(10);
+		expect(tab.gis.requests).toBe(0);
+	});
+
+	test("goes straight to Google once ready, without a tap, when the app asks for it", async () => {
+		const { extension, tab } = await openSignIn(target, {
+			native: "accept",
+			url: AUTO_START_URL,
+		});
+		await waitFor(() => extension.nativeCalls.length === 1, {
+			label: "delivery",
+		});
+		const [token] = tab.gis.tokensIssued;
+		expect(tab.gis.requests).toBe(1);
+		expect(nativePayloads(extension)).toEqual([
+			{ app: NATIVE_APP, payload: { type: "token", token } },
+		]);
+		expect(tab.pageErrors).toEqual([]);
+	});
+
+	test("falls back to the button, once, when the popup fails to open on its own", async () => {
+		const { extension, tab } = await openSignIn(target, {
+			native: "accept",
+			gis: ["popup_failed_to_open"],
+			url: AUTO_START_URL,
+		});
+		await waitFor(() => tab.gis.requests === 1, { label: "auto start" });
+		await tab.whenReady();
+		await flush(10);
+		expect(tab.gis.requests).toBe(1);
+		expect(extension.nativeCalls).toEqual([]);
+		clickSignIn(tab);
+		await waitFor(() => extension.nativeCalls.length === 1, {
+			label: "delivery",
+		});
+		expect(tab.gis.requests).toBe(2);
 	});
 
 	test("an accepted token goes to the background and the app and is never rendered", async () => {

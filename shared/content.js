@@ -3,6 +3,10 @@
 
 	const api = typeof browser !== "undefined" ? browser : chrome;
 	const RESULT_CHANNEL = "grindr-google-oauth:result";
+	const START_CHANNEL = "grindr-google-oauth:start";
+	// An app opening the page only to sign in (Free Grind's
+	// GoogleOAuthActivity) asks to go straight to Google with this.
+	const AUTO_START_HASH = "#autostart";
 	const DELIVERY_FAILED = "Couldn't hand the token to the app.";
 	const EXTENSION_GONE =
 		"The extension was updated or turned off. Reload the page to sign in again.";
@@ -29,6 +33,7 @@
 
 	let mounted = false;
 	let handled = false;
+	let autoStarted = false;
 
 	const isGeckoViewBuiltIn = () => {
 		try {
@@ -102,6 +107,16 @@
 		const { phase, token, error } = event.data;
 		if (phase) {
 			window.__grindrOauthUi.setPhase(phase);
+			// Go straight to Google, once. Should the popup fail to open
+			// without a tap, the button stays as the fallback.
+			if (
+				phase === "ready" &&
+				!autoStarted &&
+				location.hash === AUTO_START_HASH
+			) {
+				autoStarted = true;
+				window.postMessage({ channel: START_CHANNEL }, location.origin);
+			}
 			return;
 		}
 		if (handled) return;

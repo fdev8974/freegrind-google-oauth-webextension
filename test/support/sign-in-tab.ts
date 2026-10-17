@@ -31,6 +31,7 @@ export type ContextState =
 
 export type TabOptions = ClipboardOptions & {
 	tabId?: number;
+	url?: string;
 	gis?: GisOutcome[];
 	injectFails?: string;
 	gsiLoadFailures?: number;
@@ -127,7 +128,7 @@ export const openTab = (extension: Extension, options: TabOptions = {}) => {
 	const { target, manifest, getURL } = extension;
 	const files = targetFiles(target);
 	const tabId = options.tabId ?? DEFAULT_TAB_ID;
-	const window = createPageWindow(SIGN_IN_URL);
+	const window = createPageWindow(options.url ?? SIGN_IN_URL);
 	const document = window.document;
 	document.documentElement.innerHTML = GRINDR_PAGE;
 	const uiClock = new FakeClock();

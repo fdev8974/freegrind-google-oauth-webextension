@@ -26,7 +26,7 @@ Alternatively, clone the repository yourself and build the extension using `./bu
 
 **GeckoView**:
 
-1. Install the extension as a built-in (see above) and load `https://web.grindr.com/` in a `GeckoSession`. If the session is private, allow the extension in private browsing.
+1. Install the extension as a built-in (see above) and load `https://web.grindr.com/` in a `GeckoSession`. If the session is private, allow the extension in private browsing. Load `https://web.grindr.com/#autostart` instead to open Google's sign-in right away, without a tap on the button; allow the popup in your `PromptDelegate.onPopupPrompt`, otherwise the button stays as the fallback.
 2. The content script blanks the page and shows a "Sign in with Google" button. After the user signs in, the token is sent to your app over native messaging.
 3. Register the delegate on the extension:
 
