@@ -61,8 +61,11 @@
 		}
 	};
 
+	const isAutoStart = () => location.hash === AUTO_START_HASH;
+
 	const fail = (message) => {
 		handled = false;
+		window.__grindrOauthUi.reveal();
 		window.__grindrOauthUi.setPhase("failed");
 		window.__grindrOauthUi.setError(message);
 	};
@@ -107,15 +110,19 @@
 		const { phase, token, error } = event.data;
 		if (phase) {
 			window.__grindrOauthUi.setPhase(phase);
-			// Go straight to Google, once. Should the popup fail to open
-			// without a tap, the button stays as the fallback.
-			if (
-				phase === "ready" &&
-				!autoStarted &&
-				location.hash === AUTO_START_HASH
-			) {
-				autoStarted = true;
-				window.postMessage({ channel: START_CHANNEL }, location.origin);
+			// Go straight to Google, once, with the card still hidden. Back
+			// at "ready" the popup failed to open without a tap: only then
+			// show the button as the fallback.
+			if (phase === "ready" && isAutoStart()) {
+				if (autoStarted) {
+					window.__grindrOauthUi.reveal();
+				} else {
+					autoStarted = true;
+					window.postMessage(
+						{ channel: START_CHANNEL },
+						location.origin,
+					);
+				}
 			}
 			return;
 		}
@@ -136,7 +143,7 @@
 			head,
 			document.createElement("body"),
 		);
-		window.__grindrOauthUi.mount();
+		window.__grindrOauthUi.mount({ quiet: isAutoStart() });
 		try {
 			await injectPageScripts();
 		} catch (error) {

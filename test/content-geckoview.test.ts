@@ -55,22 +55,41 @@ describe("geckoview content", () => {
 		const { tab } = await readySignIn(target, { native: "accept" });
 		await flush(10);
 		expect(tab.gis.requests).toBe(0);
+		expect(tab.ui.card.hidden).toBe(false);
 	});
 
-	test("goes straight to Google once ready, without a tap, when the app asks for it", async () => {
+	test("goes straight to Google once ready, without a tap or the card ever showing, when the app asks for it", async () => {
 		const { extension, tab } = await openSignIn(target, {
 			native: "accept",
 			url: AUTO_START_URL,
 		});
-		await waitFor(() => extension.nativeCalls.length === 1, {
-			label: "delivery",
-		});
+		await waitFor(() => tab.ui.find("card"), { label: "mounted card" });
+		const shownStates: boolean[] = [];
+		await waitFor(
+			() => {
+				shownStates.push(!tab.ui.card.hidden);
+				return extension.nativeCalls.length === 1;
+			},
+			{ label: "delivery" },
+		);
 		const [token] = tab.gis.tokensIssued;
 		expect(tab.gis.requests).toBe(1);
 		expect(nativePayloads(extension)).toEqual([
 			{ app: NATIVE_APP, payload: { type: "token", token } },
 		]);
+		expect(shownStates).not.toContain(true);
+		expect(tab.ui.card.hidden).toBe(true);
 		expect(tab.pageErrors).toEqual([]);
+	});
+
+	test("shows the card with the error when the app refuses an automatic sign-in", async () => {
+		const { tab } = await openSignIn(target, {
+			native: "refuse",
+			url: AUTO_START_URL,
+		});
+		await whenFailed(tab);
+		expect(tab.ui.card.hidden).toBe(false);
+		expect(tab.ui.error.hidden).toBe(false);
 	});
 
 	test("falls back to the button, once, when the popup fails to open on its own", async () => {
@@ -82,6 +101,7 @@ describe("geckoview content", () => {
 		await waitFor(() => tab.gis.requests === 1, { label: "auto start" });
 		await tab.whenReady();
 		await flush(10);
+		expect(tab.ui.card.hidden).toBe(false);
 		expect(tab.gis.requests).toBe(1);
 		expect(extension.nativeCalls).toEqual([]);
 		clickSignIn(tab);

@@ -29,6 +29,10 @@ html.grindr-oauth-active body {
 	overflow-y: auto;
 }
 
+.grindr-oauth-card[hidden] {
+	display: none;
+}
+
 .grindr-oauth-card {
 	display: flex;
 	flex-direction: column;

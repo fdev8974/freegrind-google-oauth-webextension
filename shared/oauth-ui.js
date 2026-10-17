@@ -16,11 +16,14 @@
 		return el;
 	};
 
-	const mount = () => {
+	// quiet: keep the card hidden until reveal(), for a sign-in that starts
+	// on its own and only needs the button as a fallback.
+	const mount = ({ quiet = false } = {}) => {
 		document.documentElement.classList.add("grindr-oauth-active");
 
 		const overlay = element("div", "grindr-oauth-overlay");
 		cardEl = element("div", "grindr-oauth-card");
+		cardEl.hidden = quiet;
 
 		buttonEl = element("button", "grindr-oauth-button", "Loading...");
 		buttonEl.type = "button";
@@ -33,6 +36,10 @@
 		cardEl.append(buttonEl, errorEl);
 		overlay.append(cardEl);
 		document.documentElement.append(overlay);
+	};
+
+	const reveal = () => {
+		if (cardEl) cardEl.hidden = false;
 	};
 
 	const setError = (message) => {
@@ -79,6 +86,7 @@
 
 	const showTokenCard = (children) => {
 		if (!cardEl) mount();
+		reveal();
 		buttonEl = null;
 		errorEl = null;
 		cardEl.classList.add("grindr-oauth-token-card");
@@ -169,5 +177,5 @@
 		);
 	};
 
-	window.__grindrOauthUi = { mount, setError, setPhase, showToken };
+	window.__grindrOauthUi = { mount, reveal, setError, setPhase, showToken };
 })();
